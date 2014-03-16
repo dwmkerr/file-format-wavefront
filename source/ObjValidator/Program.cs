@@ -18,7 +18,6 @@ namespace ObjValidator
             //  Use the File Format object to load the test data.
             var result = FileFormatObj.Load(args[0]);
 
-
             //  If there are no messages, then the file is completely valid.
             if(!result.Messages.Any())
             {

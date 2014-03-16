@@ -146,8 +146,8 @@ namespace FileFormatWavefront
                             indices.Add(new Index
                                         {
                                             vertex = int.Parse(parts[0]) - 1,
-                                            uv = (parts.Length > 1 && parts[1].Length > 0) ? (int?)int.Parse(parts[1]) : null,
-                                            normal = (parts.Length > 2 && parts[2].Length > 0) ? (int?)int.Parse(parts[1]) : null
+                                            uv = (parts.Length > 1 && parts[1].Length > 0) ? (int?)int.Parse(parts[1]) - 1 : null,
+                                            normal = (parts.Length > 2 && parts[2].Length > 0) ? (int?)int.Parse(parts[1]) - 1 : null
                                         });
                         }
                         interimFaces.Add(new InterimFace
