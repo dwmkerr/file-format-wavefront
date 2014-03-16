@@ -19,7 +19,7 @@ To load data from a Wavefront Object File, use the ``FileFormatObj`` class:
 
 ````csharp
 //  Use the File Format object to load the test data.
-var result = FileFormatObj.Load(args[0]);
+var result = FileFormatObj.Load("MyFile.obj");
 ````
 
 The object that is returned is a ``FileLoadResult`` object. The object contains a property ``Model`` which is the Scene of data loaded. The object also contains a collection of ``Message`` objects describing any warnings or errors encountered loading the file:
