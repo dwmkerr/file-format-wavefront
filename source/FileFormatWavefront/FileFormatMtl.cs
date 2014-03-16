@@ -82,6 +82,14 @@ namespace FileFormatWavefront
                     {
                         currentMaterial.Shininess = float.Parse(lineData);
                     }
+                    else if (lineType.IsLineType(LineTypeOpticalDensity))
+                    {
+                        currentMaterial.OpticalDensity = float.Parse(lineData);
+                    }
+                    else if (lineType.IsLineType(LineTypeBumpStrength))
+                    {
+                        currentMaterial.BumpStrength = float.Parse(lineData);
+                    }
                     else if (lineType.IsLineType(LineTypeTextureMapAmbient))
                     {
                         currentMaterial.TextureMapAmbient = ReadTextureMap(lineData);
@@ -160,6 +168,8 @@ namespace FileFormatWavefront
         private const string LineTypeMaterialDiffuse = "Kd";
         private const string LineTypeMaterialSpecular = "Ks";
         private const string LineTypeMaterialShininess = "Ns";
+        private const string LineTypeOpticalDensity = "Ni";
+        private const string LineTypeBumpStrength = "Km";
         private const string LineTypeDissolve = "d";
         private const string LineTypeTransparent = "Tr";
         private const string LineTypeTextureMapAmbient = "map_Ka";

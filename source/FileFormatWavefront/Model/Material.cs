@@ -70,5 +70,15 @@ namespace FileFormatWavefront.Model
         /// The illumination model.
         /// </value>
         public int IlluminationModel { get; internal set; }
+
+        /// <summary>
+        /// Gets the optical density, also known as the Index of Refraction.
+        /// </summary>
+        public float? OpticalDensity { get; internal set; }
+
+        /// <summary>
+        /// Gets the occasionally used bump strength.
+        /// </summary>
+        public float? BumpStrength { get; internal set; }
     }
 }
