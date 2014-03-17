@@ -158,7 +158,8 @@ namespace FileFormatWavefront
 
             try
             {
-                textureMap.Image = Image.FromFile(textureMap.Path);
+                var path = Path.Combine(Path.GetDirectoryName(fileName), lineData);
+                textureMap.Image = Image.FromFile(path);
             }
             catch (Exception exception)
             {
