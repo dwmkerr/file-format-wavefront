@@ -18,8 +18,12 @@ namespace FileFormatWavefront
         /// The actual scene data is in the returned object's 'Model' data.
         /// </summary>
         /// <param name="path">The path to the *.obj file.</param>
-        /// <returns>A <see cref="FileLoadResult{TModel}"/> containing the file load result.</returns>
-        public static FileLoadResult<Scene> Load(string path)
+        /// <param name="loadTextureImages">if set to <c>true</c> texture images
+        /// will be loaded and set in the <see cref="TextureMap.Image"/> property.</param>
+        /// <returns>
+        /// A <see cref="FileLoadResult{TModel}" /> containing the file load result.
+        /// </returns>
+        public static FileLoadResult<Scene> Load(string path, bool loadTextureImages)
         {
             //  Create a stream reader.
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -27,7 +31,7 @@ namespace FileFormatWavefront
                 using (var reader = new StreamReader(stream))
                 {
                     //  Read the scene.
-                    return ReadScene(reader, path);
+                    return ReadScene(reader, path, loadTextureImages);
                 }
             }
         }
@@ -37,8 +41,11 @@ namespace FileFormatWavefront
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="path">The path.</param>
-        /// <returns>The file load result.</returns>
-        private static FileLoadResult<Scene> ReadScene(StreamReader reader, string path)
+        /// <param name="loadTextureImages">if set to <c>true</c> [load texture images].</param>
+        /// <returns>
+        /// The file load result.
+        /// </returns>
+        private static FileLoadResult<Scene> ReadScene(StreamReader reader, string path, bool loadTextureImages)
         {
             //  Keep track of messages and the raw data we will use to build a scene.
             var messages = new List<Message>();
@@ -48,6 +55,7 @@ namespace FileFormatWavefront
             var interimFaces = new List<InterimFace>();
             var materials = new List<Material>();
             var groups = new List<Group>();
+            string objectName = null;
 
             //  State changing data is loaded as we go through the file - once loaded, state changing
             //  data applies to all subsequent elements until it is explicitly changed by introducing
@@ -175,7 +183,7 @@ namespace FileFormatWavefront
                     //  Read the material file.
                     try
                     {
-                        var fileLoadResult = FileFormatMtl.Load(materialPath);
+                        var fileLoadResult = FileFormatMtl.Load(materialPath, loadTextureImages);
                         materials.AddRange(fileLoadResult.Model);
                         messages.AddRange(fileLoadResult.Messages);
                     }
@@ -214,6 +222,16 @@ namespace FileFormatWavefront
                         currentGroup.SetSmoothingGroup(null);
                     }
                 }
+                else if(lineType.IsLineType(LineTypeObjectName))
+                {
+                    //  Set the object name, warning if it's already set.
+                    if (objectName != null)
+                    {
+                        messages.Add(new Message(MessageType.Warning, path, lineNumberCounter,
+                            string.Format("An object name statement to set the name to '{0}' will overwrite the current object name '{1}'.", lineData, objectName)));
+                    }
+                    objectName = lineData;
+                }
                 else
                 {
                     messages.Add(new Message(MessageType.Warning, path, lineNumberCounter,
@@ -240,7 +258,7 @@ namespace FileFormatWavefront
                     ungroupedFaces.Add(face);
             }
 
-            return new FileLoadResult<Scene>(new Scene(vertices, uvs, normals, ungroupedFaces, groups, materials), messages);
+            return new FileLoadResult<Scene>(new Scene(vertices, uvs, normals, ungroupedFaces, groups, materials, objectName), messages);
         }
 
         private const string LineTypeTextureCoordinate = "vt";
@@ -251,6 +269,7 @@ namespace FileFormatWavefront
         private const string LineTypeUseMaterial = "usemtl";
         private const string LineTypeGroup = "g";
         private const string LineTypeSmoothingGroup = "s";
+        private const string LineTypeObjectName = "o";
 
         /// <summary>
         /// The data separators, any valid value that can separate data in a line.

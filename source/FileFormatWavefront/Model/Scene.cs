@@ -17,8 +17,10 @@ namespace FileFormatWavefront.Model
         private readonly List<Face> ungroupedFaces;
         private readonly List<Group> groups; 
         private readonly List<Material> materials;
+        private readonly string objectName;
 
-        internal Scene(List<Vertex> vertices, List<UV> uvs, List<Vertex> normals, List<Face> ungroupedFaces, List<Group> groups, List<Material> materials)
+        internal Scene(List<Vertex> vertices, List<UV> uvs, List<Vertex> normals, List<Face> ungroupedFaces, List<Group> groups, List<Material> materials,
+            string objectName)
         {
             this.vertices = vertices;
             this.uvs = uvs;
@@ -26,6 +28,7 @@ namespace FileFormatWavefront.Model
             this.ungroupedFaces = ungroupedFaces;
             this.groups = groups;
             this.materials = materials;
+            this.objectName = objectName;
         }
 
         /// <summary>
@@ -75,5 +78,10 @@ namespace FileFormatWavefront.Model
         {
             get { return materials.AsReadOnly(); }
         }
+
+        /// <summary>
+        /// Gets the name of the object in the file. This can be (and in many cases will be) null. 
+        /// </summary>
+        public string ObjectName { get { return objectName; } }
     }
 }

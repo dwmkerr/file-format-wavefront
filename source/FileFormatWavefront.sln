@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileFormatWavefront", "FileFormatWavefront\FileFormatWavefront.csproj", "{878EC1C4-D57E-4749-AE1F-41F393977655}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjValidator", "ObjValidator\ObjValidator.csproj", "{497F077E-A8E2-4B49-AC6E-9BECDCD4CBA9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WavefrontObjectLoader", "WavefrontObjectLoader\WavefrontObjectLoader.csproj", "{EA7A4D48-969F-4E19-8BAB-BBC051F1C3EE}"
 EndProject
 Global
@@ -17,10 +15,6 @@ Global
 		{878EC1C4-D57E-4749-AE1F-41F393977655}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{878EC1C4-D57E-4749-AE1F-41F393977655}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{878EC1C4-D57E-4749-AE1F-41F393977655}.Release|Any CPU.Build.0 = Release|Any CPU
-		{497F077E-A8E2-4B49-AC6E-9BECDCD4CBA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{497F077E-A8E2-4B49-AC6E-9BECDCD4CBA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{497F077E-A8E2-4B49-AC6E-9BECDCD4CBA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{497F077E-A8E2-4B49-AC6E-9BECDCD4CBA9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA7A4D48-969F-4E19-8BAB-BBC051F1C3EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA7A4D48-969F-4E19-8BAB-BBC051F1C3EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA7A4D48-969F-4E19-8BAB-BBC051F1C3EE}.Release|Any CPU.ActiveCfg = Release|Any CPU

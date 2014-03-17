@@ -25,43 +25,50 @@ namespace WavefrontObjectLoader
             AddOutput("Choose File > Load to load a Wavefront *.obj file");
         }
 
-        private async void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (isBusy) return;
+            if (isBusy)
+                return;
             //  Create a file open dialog to load the file.
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Wavefront Object Files (*.obj)|*.obj|All Files (*.*)|*.*";
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
-                DestroyDetailsUi();
-                treeViewModel.Nodes.Clear();
-
-
-                var loadingMessage = string.Format("Loading {0}", Path.GetFileName(openFileDialog.FileName));
-
-                AddOutput(loadingMessage);
-                StartBusy(loadingMessage);
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-
-                //  Load the model.
-                var result = await LoadFile(openFileDialog.FileName);
-                StopBusy();
-                stopwatch.Stop();
-
-                AddOutput(string.Format("Loaded {0} in {1}, {2} warning(s), {3} error(s).", 
-                    Path.GetFileName(openFileDialog.FileName),
-                    stopwatch.Elapsed.ToString(),
-                    result.Messages.Count(m => m.MessageType == MessageType.Warning),
-                    result.Messages.Count(m => m.MessageType == MessageType.Error)));
-
-                ShowResult(result);
+                LoadFileAsync(openFileDialog.FileName);
             }
         }
 
-        private async Task<FileLoadResult<Scene>> LoadFile(string path)
+        private async void LoadFileAsync(string path)
         {
-            return await Task.Run(() => FileFormatObj.Load(path));
+            //  Reset the UI.
+            DestroyDetailsUi();
+            treeViewModel.Nodes.Clear();
+
+            //  Create a loading message, write it and set the app to busy.
+            var loadingMessage = string.Format("Loading {0}", Path.GetFileName(path));
+            AddOutput(loadingMessage);
+            StartBusy(loadingMessage);
+            
+            //  Start a stopwatch for the actual loading.
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            //  Load the model.
+            var result = await Task.Run(() => FileFormatObj.Load(path, true));
+            StopBusy();
+            stopwatch.Stop();
+
+            //  Write a little bit of summary information.
+            AddOutput(string.Format("Loaded {0} in {1}, {2} warning(s), {3} error(s).",
+                Path.GetFileName(path),
+                stopwatch.Elapsed,
+                result.Messages.Count(m => m.MessageType == MessageType.Warning),
+                result.Messages.Count(m => m.MessageType == MessageType.Error)));
+            if (!string.IsNullOrEmpty(result.Model.ObjectName))
+                AddOutput(string.Format("The object is named '{0}'.", result.Model.ObjectName));
+
+            //  Show the result.
+            ShowResult(result);
         }
 
         private void StartBusy(string busyText)

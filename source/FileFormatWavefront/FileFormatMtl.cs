@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using FileFormatWavefront.Extensions;
 using FileFormatWavefront.Internals;
@@ -16,13 +17,15 @@ namespace FileFormatWavefront
         /// Loads materials from the specified stream.
         /// </summary>
         /// <param name="path">The path.</param>
+        /// <param name="loadTextureImages">if set to <c>true</c> texture images
+        /// will be loaded and set in the <see cref="TextureMap.Image"/> property.</param>
         /// <returns>The results of the file load.</returns>
-        public static FileLoadResult<List<Material>> Load(string path)
+        public static FileLoadResult<List<Material>> Load(string path, bool loadTextureImages)
         {
             //  Create a streamreader and read the data.
             using(var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var streamReader = new StreamReader(stream))
-                return Read(streamReader, path);
+                return Read(streamReader, path, loadTextureImages);
         }
 
         /// <summary>
@@ -30,8 +33,11 @@ namespace FileFormatWavefront
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="path">The path. This can be null - it is only used for recording diagnostic information.</param>
-        /// <returns>The results of the file load.</returns>
-        private static FileLoadResult<List<Material>> Read(TextReader reader, string path)
+        /// <param name="loadTextureImages">if set to <c>true</c> [load texture images].</param>
+        /// <returns>
+        /// The results of the file load.
+        /// </returns>
+        private static FileLoadResult<List<Material>> Read(TextReader reader, string path, bool loadTextureImages)
         {
             //  The model we are loading is a list of materials. During loading, we'll keep
             //  track of messages that may be useful to consumers.
@@ -92,27 +98,27 @@ namespace FileFormatWavefront
                     }
                     else if (lineType.IsLineType(LineTypeTextureMapAmbient))
                     {
-                        currentMaterial.TextureMapAmbient = ReadTextureMap(lineData);
+                        currentMaterial.TextureMapAmbient = ReadTextureMap(path, lineNumberCounter, messages, lineData, loadTextureImages);
                     }
                     else if (lineType.IsLineType(LineTypeTextureMapDiffuse))
                     {
-                        currentMaterial.TextureMapDiffuse = ReadTextureMap(lineData);
+                        currentMaterial.TextureMapDiffuse = ReadTextureMap(path, lineNumberCounter, messages, lineData, loadTextureImages);
                     }
                     else if (lineType.IsLineType(LineTypeTextureMapSpecular))
                     {
-                        currentMaterial.TextureMapSpecular = ReadTextureMap(lineData);
+                        currentMaterial.TextureMapSpecular = ReadTextureMap(path, lineNumberCounter, messages, lineData, loadTextureImages);
                     }
                     else if (lineType.IsLineType(LineTypeTextureMapSpecularHighlight))
                     {
-                        currentMaterial.TextureMapSpecularHighlight = ReadTextureMap(lineData);
+                        currentMaterial.TextureMapSpecularHighlight = ReadTextureMap(path, lineNumberCounter, messages, lineData, loadTextureImages);
                     }
                     else if (lineType.IsLineType(LineTypeTextureMapAlpha))
                     {
-                        currentMaterial.TextureMapAlpha = ReadTextureMap(lineData);
+                        currentMaterial.TextureMapAlpha = ReadTextureMap(path, lineNumberCounter, messages, lineData, loadTextureImages);
                     }
                     else if (lineType.IsLineType(LineTypeTextureMapBump))
                     {
-                        currentMaterial.TextureMapBump = ReadTextureMap(lineData);
+                        currentMaterial.TextureMapBump = ReadTextureMap(path, lineNumberCounter, messages, lineData, loadTextureImages);
                     }
                     else if (lineType.IsLineType(LineTypeDissolve) || lineType.IsLineType(LineTypeTransparent))
                     {
@@ -143,10 +149,23 @@ namespace FileFormatWavefront
             return new FileLoadResult<List<Material>>(materials, messages);
         }
 
-        private static TextureMap ReadTextureMap(string lineData)
+        private static TextureMap ReadTextureMap(string fileName, int lineNumber, List<Message> messages, string lineData, bool loadTextureBitmaps)
         {
             //  TODO: Support text map options. http://paulbourke.net/dataformats/mtl/
-            return new TextureMap { Path = lineData };
+            var textureMap = new TextureMap { Path = lineData };
+            if(loadTextureBitmaps == false)
+                return textureMap;
+
+            try
+            {
+                textureMap.Image = Image.FromFile(textureMap.Path);
+            }
+            catch (Exception exception)
+            {
+                messages.Add(new Message(MessageType.Error, fileName, lineNumber,
+                    string.Format("Failed to load the texture map image file '{0}'", lineData), exception));
+            }
+            return textureMap;
         }
 
         private static Colour ReadColour(string lineData)
