@@ -89,14 +89,21 @@ namespace WavefrontObjectLoader
         private void ShowResult(FileLoadResult<Scene> result)
         {
             //  Write results to the output window.
+            int count = 0;
             foreach (var message in result.Messages)
             {
                 var messageColour = message.MessageType == MessageType.Error ? Color.Red : Color.DarkOrange;
                 AddOutput(string.Format("{0}: {1}", message.MessageType, message.Details), messageColour);
                 AddOutput(string.Format("{0}: {1}", message.FileName, message.LineNumber), messageColour);
+                count++;
+                if (count == 1000)
+                {
+                    AddOutput("Message count exceeds 1000, no more messages will be displayed.", Color.Red);
+                    break;
+                }
             }
 
-            PopulateModelTreeView(result.Model);
+        PopulateModelTreeView(result.Model);
         }
 
         private void PopulateModelTreeView(Scene scene)
