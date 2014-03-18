@@ -151,11 +151,14 @@ namespace FileFormatWavefront
                         {
                             //  Split the parts.
                             var parts = indexString.Split(new[] { '/' }, StringSplitOptions.None);
+                            var vertex = MapIndex(vertices.Count, int.Parse(parts[0]));
+                            var uv = (parts.Length > 1 && parts[1].Length > 0) ? (int?)MapIndex(uvs.Count, int.Parse(parts[1])) : null;
+                            var normal = (parts.Length > 2 && parts[2].Length > 0) ? (int?)MapIndex(normals.Count, int.Parse(parts[2])) : null;
                             indices.Add(new Index
                                         {
-                                            vertex = int.Parse(parts[0]) - 1,
-                                            uv = (parts.Length > 1 && parts[1].Length > 0) ? (int?)int.Parse(parts[1]) - 1 : null,
-                                            normal = (parts.Length > 2 && parts[2].Length > 0) ? (int?)int.Parse(parts[1]) - 1 : null
+                                            vertex = vertex,
+                                            uv = uv,
+                                            normal = normal
                                         });
                         }
                         interimFaces.Add(new InterimFace
@@ -259,6 +262,19 @@ namespace FileFormatWavefront
             }
 
             return new FileLoadResult<Scene>(new Scene(vertices, uvs, normals, ungroupedFaces, groups, materials, objectName), messages);
+        }
+
+        /// <summary>
+        /// Maps an index defined in the file.
+        /// Indexes are 1 based, so we fix this. Also, if they're negative they're 1 based
+        /// but going backwards from the last element - which is why we need the <paramref name="currentElementCount"/>.
+        /// </summary>
+        /// <param name="currentElementCount">The current element count.</param>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
+        private static int MapIndex(int currentElementCount, int index)
+        {
+            return (index > 0) ? index - 1 : currentElementCount + index;
         }
 
         private const string LineTypeTextureCoordinate = "vt";
