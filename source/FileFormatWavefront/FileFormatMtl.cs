@@ -151,7 +151,7 @@ namespace FileFormatWavefront
 
         private static TextureMap ReadTextureMap(string fileName, int lineNumber, List<Message> messages, string lineData, bool loadTextureBitmaps)
         {
-            //  TODO: Support text map options. http://paulbourke.net/dataformats/mtl/
+            //  TODO: Support texture map options. http://paulbourke.net/dataformats/mtl/
             var textureMap = new TextureMap { Path = lineData };
             if(loadTextureBitmaps == false)
                 return textureMap;
@@ -173,7 +173,7 @@ namespace FileFormatWavefront
         {
 
             //  Get the colour parts.
-            var colourParts = lineData.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var colourParts = lineData.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             return new Colour
             {
                 r = float.Parse(colourParts[0]),

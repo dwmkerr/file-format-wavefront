@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using FileFormatWavefront.Extensions;
@@ -64,7 +63,7 @@ namespace FileFormatWavefront
             string currentMaterialName = null;
 
             //  Read line by line.
-            string line = null;
+            string line;
             int lineNumberCounter = 0;
             while ((line = reader.ReadLine()) != null)
             {
