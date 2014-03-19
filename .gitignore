@@ -149,3 +149,5 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 build/1.*
+build/nuspec/FileFormatWavefront/lib
+build/nuspec/FileFormatWavefront/lib/
