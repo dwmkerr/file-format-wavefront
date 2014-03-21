@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using FileFormatWavefront.Extensions;
 using FileFormatWavefront.Internals;
 using FileFormatWavefront.Model;
@@ -156,9 +157,29 @@ namespace FileFormatWavefront
             if(loadTextureBitmaps == false)
                 return textureMap;
 
+            //  If we have quotes, we've got a way to get the path explicitly.
+            string textureFileName;
+            var quotePos = lineData.IndexOf('"');
+            if(quotePos != -1)
+            {
+                var quoteEndPos = lineData.IndexOf('"', quotePos + 1);
+                if(quoteEndPos == -1)
+                {
+                    messages.Add(new Message(MessageType.Error, fileName, lineNumber,
+                        "The texture file is specified incorrectly."));
+                    return null;
+                }
+                textureFileName = lineData.Substring(quoteEndPos + 1, quoteEndPos - quotePos - 1);
+            }
+            else
+            {
+                //  If we don't have quotes, we'll have to assume that the last part of the line is the texture.
+                textureFileName = lineData.Split(' ').Last();
+            }
+
             try
             {
-                var path = Path.Combine(Path.GetDirectoryName(fileName), lineData);
+                var path = Path.Combine(Path.GetDirectoryName(fileName), textureFileName);
                 textureMap.Image = Image.FromFile(path);
             }
             catch (Exception exception)
