@@ -56,8 +56,3 @@ The ``Model`` property is of type ``Scene`` and contains the following members:
  * ``UngroupedFaces`` all faces not grouped into objects.
 
 Associated *.mlb (material library) files are loaded automatically. If you want to load a material library only, you can use the ``FileFormatMlb`` class in the same way as the ``FileFormatObj`` class.
-
-Notes on Textures
------------------
-
-Currently textures are not loaded - only the path to the texture file is stored in the ``TextureMap`` object. This is to avoid dependencies to any image loading code - it is a trivial matter to load textures from files in .NET, but as many users will transform this data into their own domain, I leave this mapping step to the consumer of the library.
