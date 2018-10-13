@@ -1,6 +1,8 @@
 file-format-wavefront
 =====================
 
+[![GuardRails badge](https://badges.production.guardrails.io/dwmkerr/file-format-wavefront.svg)](https://www.guardrails.io)
+
 A simple .NET library to load data from Wavefront *.obj and *.mlb files.
 
 Installation
