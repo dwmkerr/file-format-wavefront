@@ -3,6 +3,8 @@ file-format-wavefront
 
 A simple .NET library to load data from Wavefront *.obj and *.mlb files.
 
+❗ **Deprecated** - this library bas been deprecated. I recommened using the [`SharpGL.Serialization`](https://github.com/dwmkerr/sharpgl/tree/master/source/SharpGL/Core/SharpGL.Serialization) package which supports Wavefront, Discreet, and more.
+
 Installation
 ------------
 
